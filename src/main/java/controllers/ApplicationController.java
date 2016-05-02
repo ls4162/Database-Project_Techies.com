@@ -122,10 +122,9 @@ public class ApplicationController {
 
     @Transactional
     public Result login(@Param("email") String pEmail, @Param("secret") String pPassword, Context context) {
-        if("POST".equals(context.getMethod()))
-        {
-           UserTable canLogin = userTableDao.canLogin(pEmail, pPassword);
-
+        Boolean emailExist = userTableDao.emailExist(pEmail);
+        if (emailExist && "POST".equals(context.getMethod())) {
+            UserTable canLogin = userTableDao.canLogin(pEmail, pPassword);
             if (canLogin != null) {
                 EntityManager em = EntityManagerProvider.get();
 
@@ -135,12 +134,11 @@ public class ApplicationController {
                 return Results.redirect(Globals.PathMainPage);
             }
         } else {
-            //return Results.redirect(Globals.PathMainPage);
             return Results.html();
         }
-        //return Results.redirect(Globals.PathMainPage);
         return Results.redirect(Globals.PathRoot);
     }
+
 
     public Result logout(Context context)
     {
@@ -148,14 +146,13 @@ public class ApplicationController {
 
         return Results.redirect(Globals.PathRoot);
     }
-    
-    //redirect to news after register
+
     public Result register(@Param("email") String pEmail,
                            @Param("secret") String pPassword,
                            @Param("fullname") String pFullName,
                            @Param("username") String pUsername,
                            Context context) {
-        boolean emailExist = userTableDao.emailExist(pEmail);
+        Boolean emailExist = userTableDao.emailExist(pEmail);
         if (emailExist) {
             return Results.redirect(Globals.PathRoot);
         } else {
@@ -172,7 +169,7 @@ public class ApplicationController {
                 User_session uSession = new User_session(canLogin);
                 em.persist(uSession);
                 context.getSession().put(Globals.CookieSession, uSession.getId());
-                Profile profile = new Profile(uSession.getUser(), "This guy is lazy, he did not wirte anything!"," "," ");
+                Profile profile = new Profile(uSession.getUser(), "This guy is lazy he did not wirte anything!"," "," ");
                 em.persist(profile);
                 return Results.redirect(Globals.PathProfile);
             } else {
@@ -182,9 +179,38 @@ public class ApplicationController {
             }
         }
     }
+    /*public Result register(@Param("email") String pEmail,
+                           @Param("secret") String pPassword,
+                           @Param("fullname") String pFullName,
+                           @Param("username") String pUsername,
+                           Context context) {
+        Boolean emailExist = userTableDao.emailExist(pEmail);
+        if (emailExist) {
+            return Results.redirect(Globals.PathRoot);
+        } else {
+            Session session = context.getSession();
+            EntityManager em = EntityManagerProvider.get();
+
+            UserTable user = new UserTable(pUsername, pEmail, pPassword, pFullName);
+            em.persist(user);
+
+            UserTable canLogin = userTableDao.canLogin(pEmail, pPassword);
+
+            if (canLogin != null) {
+                User_session uSession = new User_session(canLogin);
+                em.persist(uSession);
+                context.getSession().put(Globals.CookieSession, uSession.getId());
+                return Results.redirect(Globals.PathMainPage);
+            } else {
+                //return Results.redirect(Globals.PathMainPage);
+                return Results.html();
+            }
+        }
+    }*/
 
 
-    @Transactional
+
+            @Transactional
     @FilterWith(LoginFilter.class)
     public Result post_create (@Param("content") String content, @Param("permission") String permission, Context context) {
         //System.out.print("BEGINING test");
