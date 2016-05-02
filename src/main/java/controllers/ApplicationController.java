@@ -133,7 +133,8 @@ public class ApplicationController {
                 context.getSession().put(Globals.CookieSession, uSession.getId());
                 return Results.redirect(Globals.PathMainPage);
             }
-        } else {
+        } else
+         {
             return Results.html();
         }
         return Results.redirect(Globals.PathRoot);

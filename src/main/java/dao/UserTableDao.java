@@ -23,11 +23,13 @@ public class UserTableDao {
 
     @Transactional
     public Boolean emailExist(String email) {
-        if(email != null) {
+        if(email != null)
+         {
             EntityManager em = EntityManagerProvider.get();
             Query q = em.createQuery("SELECT x FROM UserTable x WHERE  email = :emailParam");
             List<UserTable> user = (List<UserTable>) q.setParameter("emailParam", email).getResultList();
-            if (user.size() != 0) {
+            if (user.size() != 0)
+            {
                 return true;
             } else {
                 return false;
